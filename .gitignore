@@ -236,3 +236,11 @@ build/
 *.log
 .gemini
 .github
+
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.env*
+*.log
+.DS_Store

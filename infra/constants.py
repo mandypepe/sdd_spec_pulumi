@@ -1,8 +1,3 @@
-"""Constantes compartidas del módulo infra.
-
-Usar constantes evita valores mágicos y facilita cambios globales.
-"""
-
 # Naming y Tags
 DEFAULT_VPN_NAME = "vpn"
 DEFAULT_TAGS = {"project": "multi-cloud-vpn", "managed-by": "pulumi"}

@@ -4,3 +4,4 @@ pulumi-azure-native
 pulumi-gcp
 pytest
 ruff
+coverage
