@@ -234,4 +234,5 @@ build/
 
 # Logs
 *.log
-
+.gemini
+.github
