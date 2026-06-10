@@ -1,0 +1,29 @@
+# Auto normalize line endings for all files
+* text=auto
+
+# Ensure these file types always use LF
+*.sh text eol=lf
+*.bash text eol=lf
+*.py text eol=lf
+
+# Ensure Windows scripts use CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.otf binary
+*.fon binary
+
