@@ -216,3 +216,22 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+__pycache__/
+.venv/
+*.pyc
+.Pulumi
+pulumi.*.yaml
+.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
+

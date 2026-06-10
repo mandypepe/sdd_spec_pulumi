@@ -1,16 +1,26 @@
-# This is a sample Python script.
+"""
+🇪🇸 Programa Pulumi de entrada para desplegar una VPN multi-cloud.
+Coordina la creación de recursos usando la configuración tipada y la fábrica de proveedores.
 
-# Press Mayús+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+🇺🇸 Pulumi entry point for deploying a multi-cloud VPN.
+Coordinates resource creation using typed configuration and the provider factory.
+"""
 
+import pulumi
+from infra.config import config
+from infra.providers import VpnProviderFactory
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Obtener el proveedor desde la configuración centralizada
+provider_name = config.provider
 
+# Usar la fábrica para crear el componente VPN específico
+vpn_component = VpnProviderFactory.create(
+    provider_name=provider_name,
+    name=config.vpn_name,
+    opts=pulumi.ResourceOptions()
+)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Exportar salidas del stack
+pulumi.export("cloud_provider", provider_name)
+pulumi.export("vpn_resource_name", vpn_component.resource_name)
+pulumi.export("vpn_outputs", vpn_component.get_outputs())
