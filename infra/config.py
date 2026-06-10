@@ -51,6 +51,17 @@ class InfrastructureConfig:
         """Retorna la ubicación de Azure."""
         return self._cfg.get("azure:location") or "eastus"
 
+    @property
+    def vpc_cidr(self) -> str:
+        """Retorna el bloque CIDR maestro de la VPC."""
+        return self._cfg.get("vpc_cidr") or "10.0.0.0/16"
+
+    @property
+    def availability_zones(self) -> list[str]:
+        """Retorna las zonas de disponibilidad objetivo."""
+        zones = self._cfg.get_object("availability_zones")
+        return zones or ["zone-1", "zone-2"]
+
 
 # Instancia única de configuración (Pattern: Singleton-like access)
 config = InfrastructureConfig()

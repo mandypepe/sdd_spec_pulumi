@@ -13,6 +13,9 @@ from .vpn.base import VpnComponent
 from .vpn.aws_vpn import AwsVpn
 from .vpn.azure_vpn import AzureVpn
 from .vpn.gcp_vpn import GcpVpn
+from .vpc.aws_vpc import AwsVpcComponent
+from .vpc.azure_vpc import AzureVpcComponent
+from .vpc.gcp_vpc import GcpVpcComponent
 
 
 class SupportedProviders:
@@ -35,17 +38,7 @@ class VpnProviderFactory:
     @classmethod
     def create(cls, provider_name: str, name: str, opts: Optional[pulumi.ResourceOptions] = None) -> VpnComponent:
         """Crea una instancia de un componente VPN basado en el proveedor.
-
-        Args:
-            provider_name: Nombre del proveedor (aws, azure, gcp).
-            name: Nombre lógico para el recurso de Pulumi.
-            opts: Opciones opcionales de Pulumi.
-
-        Returns:
-            Una instancia de una subclase de VpnComponent.
-
-        Raises:
-            ValueError: Si el proveedor no está soportado.
+        ...
         """
         provider = (provider_name or "").lower()
 
@@ -57,4 +50,29 @@ class VpnProviderFactory:
 
         vpn_class = cls._PROVIDERS[provider]
         return vpn_class(name=name, opts=opts)
+
+
+class VpcProviderFactory:
+    """Fábrica para la creación de componentes VPC."""
+
+    # Mapeo de proveedores a sus clases de implementación (OCP)
+    _PROVIDERS = {
+        SupportedProviders.AWS: AwsVpcComponent,
+        SupportedProviders.AZURE: AzureVpcComponent,
+        SupportedProviders.GCP: GcpVpcComponent,
+    }
+
+    @classmethod
+    def create(cls, provider_name: str, name: str, opts: Optional[pulumi.ResourceOptions] = None):
+        """Crea una instancia de un componente VPC basado en el proveedor."""
+        provider = (provider_name or "").lower()
+
+        if provider not in cls._PROVIDERS:
+            supported = ", ".join(cls._PROVIDERS.keys())
+            raise ValueError(
+                f"Unsupported provider: '{provider_name}'. Supported: {supported}"
+            )
+
+        vpc_class = cls._PROVIDERS[provider]
+        return vpc_class(name=name, opts=opts)
 

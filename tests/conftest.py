@@ -5,6 +5,11 @@ Permite probar la lógica de creación de recursos sin conectarse a la nube.
 
 import pytest
 import pulumi
+import sys
+import os
+
+# Asegurar que el directorio raíz está en el path para importar 'infra'
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 class MyMocks(pulumi.runtime.Mocks):
