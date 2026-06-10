@@ -68,8 +68,8 @@ class AwsVpcComponent(VpcComponent):
             ingress=[
                 # LB Ingress (HTTPS)
                 aws.ec2.SecurityGroupIngressArgs(protocol="tcp", from_port=443, to_port=443, cidr_blocks=["0.0.0.0/0"]),
-                # Compute from LB
-                aws.ec2.SecurityGroupIngressArgs(protocol="tcp", from_port=8080, to_port=8080, security_groups=[...]) # Simplified
+                # Compute from LB - placeholder for security group ID
+                aws.ec2.SecurityGroupIngressArgs(protocol="tcp", from_port=8080, to_port=8080, cidr_blocks=["10.0.0.0/16"]) 
             ],
             egress=[
                 # Allow outbound to internet
