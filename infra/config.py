@@ -10,7 +10,7 @@ import os
 from typing import Dict, Optional
 import pulumi
 
-from .constants import DEFAULT_TAGS, DEFAULT_VPN_NAME
+from .constants import DEFAULT_TAGS, DEFAULT_VPN_NAME, DEFAULT_K8S_NODE_INSTANCE_TYPE, DEFAULT_K8S_MIN_NODES, DEFAULT_K8S_MAX_NODES, DEFAULT_SECURITY_LOG_RETENTION_DAYS
 
 
 class InfrastructureConfig:
@@ -119,6 +119,22 @@ class InfrastructureConfig:
         """
         zones = self._cfg.get_object("availability_zones")
         return zones or ["zone-1", "zone-2"]
+
+    @property
+    def k8s_node_instance_type(self) -> str:
+        return self._cfg.get("k8s_node_instance_type") or DEFAULT_K8S_NODE_INSTANCE_TYPE
+
+    @property
+    def k8s_min_nodes(self) -> int:
+        return self._cfg.get_int("k8s_min_nodes") or DEFAULT_K8S_MIN_NODES
+
+    @property
+    def k8s_max_nodes(self) -> int:
+        return self._cfg.get_int("k8s_max_nodes") or DEFAULT_K8S_MAX_NODES
+
+    @property
+    def security_log_retention_days(self) -> int:
+        return self._cfg.get_int("security_log_retention_days") or DEFAULT_SECURITY_LOG_RETENTION_DAYS
 
 
 # Instancia única de configuración accesible globalmente (Singleton Pattern)
