@@ -77,6 +77,11 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 │   │   ├── aws_lb.py
 │   │   ├── azure_lb.py
 │   │   └── gcp_lb.py
+│   ├── orchestrator/       # Multi-zone Orchestrator implementations
+│   │   ├── base.py         # Abstract orchestrator interface with security & identity
+│   │   ├── aws_k8s.py      # AWS Kubernetes orchestrator
+│   │   ├── azure_k8s.py    # Azure Kubernetes orchestrator
+│   │   └── gcp_k8s.py      # GCP Kubernetes orchestrator
 │   ├── config.py           # Typed configuration management
 │   ├── constants.py        # Constant values and CIDRs
 │   └── providers.py        # Component Factory (Factory Pattern)
@@ -95,6 +100,70 @@ To run the tests:
 # Set PYTHONPATH to include the root directory
 $env:PYTHONPATH = "."
 pytest
+```
+
+### 🎯 Orchestrator Component (HU-004: Secure Multi-Zone Automated Compute Data Plane)
+
+**Overview**: The orchestrator module provides factory-driven, multi-cloud infrastructure automation for Kubernetes compute data planes with built-in security, multi-zone isolation, and identity governance.
+
+#### Key Features
+
+- **Multi-Zone Private Network Isolation** (User Story 1)
+  - Automatically distributes compute infrastructure across multiple availability zones
+  - Ensures all compute nodes reside in private, non-routable subnets
+  - Prevents public internet access to compute nodes
+
+- **Automated Scaling Synchronization** (User Story 2)
+  - Preserves live node count during infrastructure updates
+  - Implements idempotent state management
+  - Prevents disruption to active workloads during deployments
+
+- **Perimeter Security Enforcement** (User Story 3)
+  - Blocks unauthorized remote access (SSH/RDP) from public internet
+  - Restricts egress traffic to authorized destinations only
+  - Supports DNS, database, and proxy endpoints
+  - Automatically configured security groups/firewall rules per provider
+
+- **Minimum Privilege Identity Governance** (User Story 4)
+  - Assigns least-privilege IAM roles/service accounts to compute hosts
+  - Enforces workload identity protection
+  - Prevents access to sensitive business data
+
+#### Usage Example
+
+```python
+from infra.orchestrator import OrchestratorProviderFactory
+
+# Instantiate orchestrator for target cloud provider
+orchestrator = OrchestratorProviderFactory.get_component("aws", "compute-plane")
+
+# Configure multi-zone isolation
+zones = ["us-east-1a", "us-east-1b"]
+subnets = ["subnet-11111", "subnet-22222"]
+orchestrator.allocate_multi_zone_subnets(zones, subnets)
+
+# Configure security
+orchestrator.configure_security()
+
+# Configure identity
+orchestrator.configure_identity()
+
+# Provision infrastructure
+orchestrator.provision()
+```
+
+#### Testing
+
+All orchestrator components include comprehensive mock-based unit tests:
+
+```bash
+# Run orchestrator tests only
+pytest tests/orchestrator/ -v
+
+# Run specific cloud provider tests
+pytest tests/orchestrator/test_aws_k8s.py -v
+pytest tests/orchestrator/test_azure_k8s.py -v
+pytest tests/orchestrator/test_gcp_k8s.py -v
 ```
 
 ---
