@@ -72,6 +72,11 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 │   │   ├── aws_vpn.py
 │   │   ├── azure_vpn.py
 │   │   └── gcp_vpn.py
+│   ├── lb/                 # Public Load Balancer implementations
+│   │   ├── base.py
+│   │   ├── aws_lb.py
+│   │   ├── azure_lb.py
+│   │   └── gcp_lb.py
 │   ├── config.py           # Typed configuration management
 │   ├── constants.py        # Constant values and CIDRs
 │   └── providers.py        # Component Factory (Factory Pattern)

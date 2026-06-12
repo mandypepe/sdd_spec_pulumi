@@ -40,12 +40,7 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **SOLID**: Does the design follow SRP and OCP (especially for provider extensions)?
-- [ ] **Factory**: Is the component instantiated via the `VpnProviderFactory`?
-- [ ] **Hierarchy**: Are child resources correctly parented to the component (`parent=self`)?
-- [ ] **Config**: Does it use the `config` singleton and validate inputs?
-- [ ] **Tests**: Are mock-based unit tests planned for the new logic?
-- [ ] **Bilingual**: Is documentation (docstrings/comments) planned in ES and EN?
+[Gates determined based on constitution file]
 
 ## Project Structure
 

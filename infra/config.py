@@ -84,6 +84,34 @@ class InfrastructureConfig:
         return self._cfg.get("vpc_cidr") or "10.0.0.0/16"
 
     @property
+    def lb_backend_port_min(self) -> int:
+        return self._cfg.get_int("lb_backend_port_min") or 30000
+
+    @property
+    def lb_backend_port_max(self) -> int:
+        return self._cfg.get_int("lb_backend_port_max") or 32767
+
+    @property
+    def lb_health_check_path(self) -> str:
+        return self._cfg.get("lb_health_check_path") or "/healthz"
+
+    @property
+    def lb_health_check_interval(self) -> int:
+        return self._cfg.get_int("lb_health_check_interval") or 15
+
+    @property
+    def lb_enable_deletion_protection(self) -> bool:
+        return self._cfg.get_bool("lb_enable_deletion_protection") or True
+
+    @property
+    def lb_ssl_policy(self) -> str:
+        return self._cfg.get("lb_ssl_policy") or "TLS1.3-Strict"
+
+    @property
+    def lb_certificate_arn_or_id(self) -> Optional[str]:
+        return self._cfg.get("lb_certificate_arn_or_id")
+
+    @property
     def availability_zones(self) -> list[str]:
         """
         🇪🇸 Retorna la lista de zonas de disponibilidad objetivo (High Availability).

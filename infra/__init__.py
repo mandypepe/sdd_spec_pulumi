@@ -4,7 +4,11 @@ Este paquete expone fábricas y componentes de alto nivel y mantiene la
 separación entre la API del usuario y las implementaciones proveedor-específicas.
 """
 
-from .providers import VpnProviderFactory, SupportedProviders
+from .providers import VpnProviderFactory, VpcProviderFactory, LbProviderFactory, SupportedProviders
 
-__all__ = ["VpnProviderFactory", "SupportedProviders"]
-
+__all__ = [
+    "VpnProviderFactory", 
+    "VpcProviderFactory", 
+    "LbProviderFactory", 
+    "SupportedProviders"
+]

@@ -16,6 +16,10 @@ from .vpn.gcp_vpn import GcpVpn
 from .vpc.aws_vpc import AwsVpcComponent
 from .vpc.azure_vpc import AzureVpcComponent
 from .vpc.gcp_vpc import GcpVpcComponent
+from .lb.base import LbComponent
+from .lb.aws_lb import AwsLb
+from .lb.azure_lb import AzureLb
+from .lb.gcp_lb import GcpLb
 
 
 class SupportedProviders:
@@ -119,4 +123,46 @@ class VpcProviderFactory:
 
         vpc_class = cls._PROVIDERS[provider]
         return vpc_class(name=name, opts=opts)
+
+
+class LbProviderFactory:
+    """
+    🇪🇸 Factory para la creación de componentes de Load Balancer (Factory Pattern).
+    Mapea nombres de proveedor a implementaciones concretas.
+    
+    🇺🇸 Factory for Load Balancer component creation (Factory Pattern).
+    Maps provider names to concrete implementations.
+    """
+
+    # Mapeo de proveedores a sus clases (Open/Closed Principle)
+    _PROVIDERS = {
+        SupportedProviders.AWS: AwsLb,
+        SupportedProviders.AZURE: AzureLb,
+        SupportedProviders.GCP: GcpLb,
+    }
+
+    @classmethod
+    def create(
+        cls, 
+        provider_name: str, 
+        name: str, 
+        vpc_id: pulumi.Input[str],
+        public_subnet_ids: pulumi.Input[list[str]],
+        opts: Optional[pulumi.ResourceOptions] = None
+    ) -> LbComponent:
+        """
+        🇪🇸 Crea una instancia de un componente de Load Balancer según el proveedor solicitado.
+        
+        🇺🇸 Creates a Load Balancer component instance for the requested provider.
+        """
+        provider = (provider_name or "").lower()
+
+        if provider not in cls._PROVIDERS:
+            supported = ", ".join(cls._PROVIDERS.keys())
+            raise ValueError(
+                f"Unsupported provider: '{provider_name}'. Supported: {supported}"
+            )
+
+        lb_class = cls._PROVIDERS[provider]
+        return lb_class(name=name, vpc_id=vpc_id, public_subnet_ids=public_subnet_ids, opts=opts)
 
