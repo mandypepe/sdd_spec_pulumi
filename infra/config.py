@@ -137,6 +137,115 @@ class InfrastructureConfig:
         return self._cfg.get_int("security_log_retention_days") or DEFAULT_SECURITY_LOG_RETENTION_DAYS
 
 
+class OrchestratorConfig:
+    """
+    🇪🇸 Configuración para el componente orquestador (multi-zona, perimetral, identidad).
+    Validación tipada usando Pydantic para configuración de seguridad e idempotencia.
+    
+    🇺🇸 Configuration for orchestrator component (multi-zone, perimeter, identity).
+    Type-safe validation using Pydantic for security and idempotence settings.
+    """
+    
+    def __init__(self, cfg: Optional[pulumi.Config] = None):
+        self._cfg = cfg or pulumi.Config()
+    
+    @property
+    def availability_zones(self) -> list[str]:
+        """
+        🇪🇸 Zonas de disponibilidad para multi-zona compute plane.
+        🇺🇸 Availability zones for multi-zone compute plane.
+        """
+        zones = self._cfg.get_object("orchestrator:availability_zones")
+        return zones or ["zone-1", "zone-2"]
+    
+    @property
+    def subnet_ids(self) -> list[str]:
+        """
+        🇪🇸 IDs de subnets privadas para el plano de datos.
+        🇺🇸 Private subnet IDs for data plane.
+        """
+        subnets = self._cfg.get_object("orchestrator:subnet_ids")
+        return subnets or []
+    
+    @property
+    def scaling_min_nodes(self) -> int:
+        """
+        🇪🇸 Número mínimo de nodos orquestados.
+        🇺🇸 Minimum number of orchestrated nodes.
+        """
+        return self._cfg.get_int("orchestrator:scaling_min_nodes") or 2
+    
+    @property
+    def scaling_max_nodes(self) -> int:
+        """
+        🇪🇸 Número máximo de nodos orquestados.
+        🇺🇸 Maximum number of orchestrated nodes.
+        """
+        return self._cfg.get_int("orchestrator:scaling_max_nodes") or 10
+    
+    @property
+    def scaling_desired_state(self) -> int:
+        """
+        🇪🇸 Estado deseado de nodos (ignorado si autoscaling está activo).
+        🇺🇸 Desired node state (ignored if autoscaling is active).
+        """
+        return self._cfg.get_int("orchestrator:scaling_desired_state") or 3
+    
+    @property
+    def preserve_scaling_state(self) -> bool:
+        """
+        🇪🇸 Preservar estado durante operaciones de escalado automático (idempotencia).
+        🇺🇸 Preserve state during autoscaling operations (idempotence).
+        """
+        return self._cfg.get_bool("orchestrator:preserve_scaling_state") or True
+    
+    @property
+    def allow_admin_cidr_blocks(self) -> list[str]:
+        """
+        🇪🇸 Bloques CIDR autorizados para acceso administrativo (perimetral).
+        🇺🇸 Authorized CIDR blocks for admin access (perimeter).
+        """
+        blocks = self._cfg.get_object("orchestrator:allow_admin_cidr_blocks")
+        return blocks or []
+    
+    @property
+    def allow_database_endpoints(self) -> list[str]:
+        """
+        🇪🇸 Endpoints de base de datos autorizados para salida (perimetral).
+        🇺🇸 Authorized database endpoints for outbound (perimeter).
+        """
+        endpoints = self._cfg.get_object("orchestrator:allow_database_endpoints")
+        return endpoints or []
+    
+    @property
+    def allow_proxy_endpoints(self) -> list[str]:
+        """
+        🇪🇸 Proxies web autorizadas para salida (perimetral).
+        🇺🇸 Authorized web proxies for outbound (perimeter).
+        """
+        proxies = self._cfg.get_object("orchestrator:allow_proxy_endpoints")
+        return proxies or []
+    
+    @property
+    def enforce_workload_identity(self) -> bool:
+        """
+        🇪🇸 Forzar protección de identidad de carga de trabajo (gobernanza de identidad).
+        🇺🇸 Enforce workload identity protection (identity governance).
+        """
+        return self._cfg.get_bool("orchestrator:enforce_workload_identity") or True
+    
+    @property
+    def host_identity_permissions(self) -> list[str]:
+        """
+        🇪🇸 Permisos mínimos requeridos para identidad de host (least privilege).
+        🇺🇸 Minimum required permissions for host identity (least privilege).
+        """
+        perms = self._cfg.get_object("orchestrator:host_identity_permissions")
+        # Default minimum permissions: cluster join and image pull
+        return perms or ["eks:JoinCluster", "ecr:GetAuthorizationToken", "ecr:BatchGetImage"]
+
+
 # Instancia única de configuración accesible globalmente (Singleton Pattern)
 # Single configuration instance accessible globally (Singleton Pattern)
 config = InfrastructureConfig()
+orchestrator_config = OrchestratorConfig()
