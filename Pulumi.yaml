@@ -1,0 +1,4 @@
+name: sdd-spec-pulumi
+runtime: python
+description: Pulumi program for deploying the sdd_spec_pulumi infra (VPN multi-cloud)
+
