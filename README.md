@@ -34,6 +34,24 @@ Este proyecto implementa una base de infraestructura para VPNs multi-cloud (AWS,
 └── requirements.txt        # Dependencias del proyecto
 ```
 
+### Ramas de Desarrollo (Branches)
+
+Resumen de la evolución y propósitos de las ramas del proyecto:
+
+- `main`: Infraestructura base multi-cloud.
+- `create_constitution`: Configuración inicial y normalización de archivos.
+- `install_spec_kit`: Integración de la metodología de desarrollo dirigida por especificaciones.
+- `002-agnostic-vpc-topology`: Implementación de topologías de VPC agnósticas.
+- `003_agnostic_external-lb-security`: Implementación de balanceadores de carga externos y políticas de seguridad.
+- `004-k8s-base-infra`: Infraestructura base para Kubernetes.
+- `005-secure-multi-zone`: Configuración de entornos multi-zona seguros.
+- `006-secure-container-registry`: Implementación de registro de contenedores seguro.
+
+### Gestión de Especificaciones y Gobernanza
+
+- **`dtls/`**: Contiene especificaciones técnicas, documentos de diseño y lógica de alto nivel.
+- **`specs/`**: Contiene la documentación específica de cada característica, incluyendo modelos de datos, planes de implementación, tareas, requisitos de seguridad y contratos.
+
 ### Pruebas Unitarias
 
 El proyecto incluye una suite de pruebas que utiliza los mocks de Pulumi, permitiendo validar la lógica de creación de recursos sin necesidad de credenciales reales de la nube.
@@ -79,6 +97,24 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 ├── main.py                 # Pulumi entry point
 └── requirements.txt        # Project dependencies
 ```
+
+### Development Branches
+
+Summary of the evolution and purpose of project branches:
+
+- `main`: Core multi-cloud infrastructure base.
+- `create_constitution`: Initial configuration and file normalization.
+- `install_spec_kit`: Integration of spec-driven development methodology.
+- `002-agnostic-vpc-topology`: Implementation of agnostic VPC topologies.
+- `003_agnostic_external-lb-security`: Implementation of external load balancers and security policies.
+- `004-k8s-base-infra`: Kubernetes base infrastructure.
+- `005-secure-multi-zone`: Secure multi-zone environment configuration.
+- `006-secure-container-registry`: Implementation of secure container registry.
+
+### Specifications and Governance Management
+
+- **`dtls/`**: Contains technical specifications, design documents, and high-level logic documentation.
+- **`specs/`**: Contains specific feature-driven documentation, including data models, implementation plans, task breakdowns, security requirements, and architectural contracts.
 
 ### Unit Testing
 
