@@ -4,7 +4,7 @@
 
 ## 🇪🇸 Descripción (Español)
 
-Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas y federación de identidades.
+Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas, federación de identidades y **gestión de secretos**.
 
 El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especificaciones (Spec-Driven Development)**, gestionando el ciclo de vida de las características desde su conceptualización técnica hasta su implementación verificada.
 
@@ -39,29 +39,19 @@ classDiagram
     CloudComponent <|-- GCPImplementation
 ```
 
-#### Flujo de Federación de Identidad (Spec 009) / Identity Federation Flow
+#### Flujo de Federación de Identidad y Secretos (Spec 009/010) / Identity Federation & Secrets Flow
 ```mermaid
 flowchart TD
     K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
     OIDC -->|Issue JWT| K8s
-    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
-    CloudIAM -->|Validate Token| CloudIAM
-    CloudIAM -->|Grant Temporary Credentials| K8s
-    CloudIAM -.->|Boundary Constraints| K8s
-```
-
-#### Flujo de Aislamiento de Red (Spec 007) / Network Isolation Flow
-```mermaid
-flowchart TD
-    Internet((Internet)) -->|HTTPS| LB[Public Load Balancer]
-    subgraph Private_Compute [Private Compute Tier]
-        LB --> K8s[Kubernetes Cluster]
-        WI[Workload Identity] -.->|Token| K8s
+    K8s -->|Present JWT| Vault[Secrets Vault]
+    Vault -->|Validate Token| OIDC
+    Vault -->|Provide Ephemeral Credentials| K8s
+    K8s -->|Access| DB[(Managed Database)]
+    subgraph Isolated_Network [Isolated Network]
+        Vault
+        DB
     end
-    subgraph Isolated_Data [Isolated Data Tier]
-        K8s --> DB[(Managed Database)]
-    end
-    DB --x|BLOCK| Internet
 ```
 
 ### Estructura del Proyecto
@@ -71,6 +61,7 @@ flowchart TD
 ├── .specify/               # Gobernanza, plantillas y seguimiento de flujo de trabajo
 ├── dtls/                   # Especificaciones de diseño, técnicas y de lógica
 ├── infra/                  # Componentes de infraestructura (Basados en Factory)
+│   ├── vault/              # Bóvedas de secretos agnósticas (Spec 010)
 │   ├── vpc/                # Topologías de red agnósticas (Tier-based)
 │   ├── lb/                 # Balanceadores de carga externos
 │   ├── orchestrator/       # Orquestación de computo (K8s)
@@ -93,20 +84,20 @@ Resumen de la evolución y los hitos implementados en cada rama:
 - `main`: Infraestructura base y arquitectura de referencia multi-cloud.
 - `create_constitution`: Definición de la gobernanza del proyecto y principios de ingeniería.
 - `install_spec_kit`: Integración de herramientas para el desarrollo dirigido por especificaciones.
-- `002-agnostic-vpc-topology`: Arquitectura de red agnóstica con tres capas (Public, Private, Isolated).
-- `003_agnostic_external-lb-security`: Balanceadores de carga externos con políticas de seguridad perimetral automáticas.
-- `004-k8s-base-infra`: Fundamento del plano de control de Kubernetes multi-nube.
-- `005-secure-multi-zone`: Plano de datos de cómputo multi-zona automatizado con gobernanza de identidad.
-- `006-secure-container-registry`: Repositorios de contenedores con inmutabilidad de tags y escaneo de vulnerabilidades.
-- `006_isolated-managed-database`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
-- `007_network-firewall-isolation`: Implementación de firewalls perimetrales para el aislamiento de capas en Kubernetes.
-- `008-secure-identity-federation`: Implementación de federación de identidades nativa (Workload Identity / IRSA).
-
+- `002-agnostic-vpc-topology`: Arquitectura de red agnóstica.
+- `003_agnostic_external-lb-security`: Balanceadores de carga externos.
+- `004-k8s-base-infra`: Infraestructura base para Kubernetes.
+- `005-secure-multi-zone`: Configuración multi-zona segura.
+- `006-secure-container-registry`: Registro de contenedores seguro.
+- `006_isolated-managed-database`: Bases de datos administradas aisladas.
+- `007_network-firewall-isolation`: Aislamiento de capas de red con firewalls.
+- `008-secure-identity-federation`: Federación de identidades nativa (Workload Identity / IRSA).
+- `009-automated-secrets-vault-iac`: Implementación de Bóveda de Secretos automatizada con federación de identidad (Spec 010).
 ---
 
 ## 🇺🇸 Description (English)
 
-This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, and identity federation.
+This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, identity federation, and **secrets management**.
 
 The project incorporates a rigorous **Spec-Driven Development** approach, managing the feature lifecycle from technical conceptualization to verified implementation.
 
@@ -141,29 +132,19 @@ classDiagram
     CloudComponent <|-- GCPImplementation
 ```
 
-#### Flujo de Federación de Identidad (Spec 009) / Identity Federation Flow
+#### Flujo de Federación de Identidad y Secretos (Spec 009/010) / Identity Federation & Secrets Flow
 ```mermaid
 flowchart TD
     K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
     OIDC -->|Issue JWT| K8s
-    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
-    CloudIAM -->|Validate Token| CloudIAM
-    CloudIAM -->|Grant Temporary Credentials| K8s
-    CloudIAM -.->|Boundary Constraints| K8s
-```
-
-#### Flujo de Aislamiento de Red (Spec 007) / Network Isolation Flow
-```mermaid
-flowchart TD
-    Internet((Internet)) -->|HTTPS| LB[Public Load Balancer]
-    subgraph Private_Compute [Private Compute Tier]
-        LB --> K8s[Kubernetes Cluster]
-        WI[Workload Identity] -.->|Token| K8s
+    K8s -->|Present JWT| Vault[Secrets Vault]
+    Vault -->|Validate Token| OIDC
+    Vault -->|Provide Ephemeral Credentials| K8s
+    K8s -->|Access| DB[(Managed Database)]
+    subgraph Isolated_Network [Isolated Network]
+        Vault
+        DB
     end
-    subgraph Isolated_Data [Isolated Data Tier]
-        K8s --> DB[(Managed Database)]
-    end
-    DB --x|BLOCK| Internet
 ```
 
 ### Project Structure
@@ -173,6 +154,7 @@ flowchart TD
 ├── .specify/               # Governance, templates, and workflow tracking
 ├── dtls/                   # Design, Technical, and Logic specifications
 ├── infra/                  # Infrastructure components (Factory-based)
+│   ├── vault/              # Agnostic Secrets Vaults (Spec 010)
 │   ├── vpc/                # Agnostic network topologies (Tier-based)
 │   ├── lb/                 # External Load Balancers
 │   ├── orchestrator/       # Compute orchestration (K8s)
@@ -192,28 +174,18 @@ flowchart TD
 
 Summary of the evolution and milestones implemented in each branch:
 
-- `main`: Core multi-cloud infrastructure base and reference architecture.
+- `main`: Core multi-cloud infrastructure base.
 - `create_constitution`: Project governance definition and engineering principles.
 - `install_spec_kit`: Integration of spec-driven development tools.
-- `002-agnostic-vpc-topology`: Three-tier agnostic network architecture (Public, Private, Isolated).
-- `003_agnostic_external-lb-security`: External load balancers with automated perimeter security policies.
-- `004-k8s-base-infra`: Multi-cloud Kubernetes control plane foundation.
-- `005-secure-multi-zone`: Automated multi-zone compute data plane with identity governance.
-- `006-secure-container-registry`: Container repositories with tag immutability and vulnerability scanning.
-- `006_isolated-managed-database`: Managed multi-cloud database provisioning in isolated network layers with lifecycle protection.
-- `007_network-firewall-isolation`: Perimeter security firewall implementation for Kubernetes layer isolation, featuring domain whitelisting and log retention policies.
-- `008-secure-identity-federation`: Implementation of native identity federation (Workload Identity / IRSA).
-
-### 🎯 Managed Database Component
-
-**Overview**: The database module provides factory-driven infrastructure automation for managed relational databases with built-in security, high availability, and lifecycle protection.
-
-#### Key Features
-- **Network Segregation**: Fully disconnected from public internet routes.
-- **High Availability**: Automatic multi-zone distribution and synchronous replication.
-- **Perimeter Security**: Restricted ingress only to authorized compute nodes.
-- **Data Protection**: AES-256 encryption at rest and immutable lifecycle protection.
-
+- `002-agnostic-vpc-topology`: Agnostic VPC topology implementation.
+- `003_agnostic_external-lb-security`: External load balancer implementation.
+- `004-k8s-base-infra`: Kubernetes base infrastructure.
+- `005-secure-multi-zone`: Secure multi-zone environment configuration.
+- `006-secure-container-registry`: Secure container registry implementation.
+- `006_isolated-managed-database`: Isolated managed database implementation.
+- `007_network-firewall-isolation`: Network firewall isolation implementation.
+- `008-secure-identity-federation`: Native identity federation implementation (Workload Identity / IRSA).
+- `009-automated-secrets-vault-iac`: Automated Secrets Vault implementation with identity federation (Spec 010).
 ### Unit Testing
 
 The project includes a comprehensive testing suite utilizing Pulumi mocks to validate infrastructure logic without requiring real cloud credentials.
@@ -228,7 +200,5 @@ pytest
 
 ## 🚀 Cómo Extender / How to Extend
 
-Para añadir un nuevo proveedor o componente:
-1. Hereda de la clase base correspondiente en `infra/<componente>/base.py`.
-2. Implementa las interfaces específicas del proveedor.
-3. Registra la nueva implementación en la fábrica correspondiente en `infra/providers.py`.
+1.  **🇪🇸 ES**: Crea `infra/<componente>/<proveedor>_<tipo>.py` heredando de la clase base. Registra la nueva implementación en la fábrica correspondiente en `infra/providers.py`.
+2.  **🇺🇸 EN**: Create `infra/<componente>/<provider>_<type>.py` inheriting from the abstract base class. Register the new implementation in the corresponding factory in `infra/providers.py`.

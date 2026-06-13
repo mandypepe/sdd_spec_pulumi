@@ -5,10 +5,12 @@ separación entre la API del usuario y las implementaciones proveedor-específic
 """
 
 from .providers import VpnProviderFactory, VpcProviderFactory, LbProviderFactory, SupportedProviders
+from .vault.factory import VaultProviderFactory
 
 __all__ = [
     "VpnProviderFactory", 
     "VpcProviderFactory", 
     "LbProviderFactory", 
+    "VaultProviderFactory",
     "SupportedProviders"
 ]

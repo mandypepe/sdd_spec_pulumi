@@ -7,4 +7,5 @@ shell commands, and other important information, read the current plan:
 [Implementation Plan: Secure Container Registry](specs/006-secure-container-registry/plan.md)
 [Implementation Plan: Managed Database in Isolated Layer](specs/007-branchname-feature-hu/plan.md)
 [Implementation Plan: Perimeter Security Firewalls for Kubernetes Layer Isolation](specs/008-network-firewall-isolation/plan.md)
+[Implementation Plan: Automated Secrets Vault](specs/010-automated-secrets-vault/plan.md)
 <!-- SPECKIT END -->
