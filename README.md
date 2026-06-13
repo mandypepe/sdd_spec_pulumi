@@ -4,7 +4,7 @@
 
 ## 🇪🇸 Descripción (Español)
 
-Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores y bases de datos administradas.
+Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas y federación de identidades.
 
 El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especificaciones (Spec-Driven Development)**, gestionando el ciclo de vida de las características desde su conceptualización técnica hasta su implementación verificada.
 
@@ -14,6 +14,43 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 - **ComponentResource**: Todos los recursos se agrupan en componentes lógicos de Pulumi, facilitando la organización y el seguimiento de dependencias (Parent/Child).
 - **Configuración Tipada**: La clase `InfrastructureConfig` en `infra/config.py` centraliza y valida todos los parámetros de entrada.
 - **SOLID**: Diseñado para SRP, OCP, LSP, ISP y DIP.
+
+### Visualización de Arquitectura / Architecture Visualization
+
+#### Estructura de Componentes (Factory Pattern) / Component Structure
+```mermaid
+classDiagram
+    class ProviderFactory {
+        <<interface>>
+        +create(name, opts)
+    }
+    class VpcComponent { <<abstract>> }
+    class LbComponent { <<abstract>> }
+    class OrchestratorComponent { <<abstract>> }
+    class DatabaseComponent { <<abstract>> }
+    class RegistryComponent { <<abstract>> }
+    class VpnComponent { <<abstract>> }
+    class BaseIdentityComponent { <<abstract>> }
+    
+    ProviderFactory <|-- VpcProviderFactory
+    ProviderFactory <|-- LbProviderFactory
+    ProviderFactory <|-- OrchestratorProviderFactory
+    ProviderFactory <|-- DatabaseProviderFactory
+    ProviderFactory <|-- RegistryProviderFactory
+    ProviderFactory <|-- VpnProviderFactory
+    ProviderFactory <|-- IdentityProviderFactory
+```
+
+#### Flujo de Federación de Identidad / Identity Federation Flow
+```mermaid
+flowchart TD
+    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
+    OIDC -->|Issue JWT| K8s
+    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
+    CloudIAM -->|Validate Token| CloudIAM
+    CloudIAM -->|Grant Temporary Credentials| K8s
+    CloudIAM -.->|Boundary Constraints| K8s
+```
 
 ### Estructura del Proyecto
 
@@ -28,8 +65,10 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 │   ├── db/                 # Bases de datos administradas (RDS, Flexible Server, Cloud SQL)
 │   ├── registry/           # Registros de contenedores seguros (ECR, ACR, Artifact Registry)
 │   ├── vpn/                # Conectividad VPN
+│   ├── identity/           # Federación de identidades (Workload Identity)
+│   ├── security/           # Componentes de seguridad/cumplimiento
 │   ├── config.py           # Gestión de configuración tipada
-│   └── providers.py        # Fábricas de componentes
+│   └── providers.py        # Fábricas de componentes (Factory Pattern)
 ├── specs/                  # Especificaciones de características (SDD)
 ├── tests/                  # Suite de pruebas unitarias con mocks de Pulumi
 ├── main.py                 # Punto de entrada de Pulumi
@@ -48,35 +87,15 @@ Resumen de la evolución y los hitos implementados en cada rama:
 - `004-k8s-base-infra`: Fundamento del plano de control de Kubernetes multi-nube.
 - `005-secure-multi-zone`: Plano de datos de cómputo multi-zona automatizado con gobernanza de identidad.
 - `006-secure-container-registry`: Repositorios de contenedores con inmutabilidad de tags y escaneo de vulnerabilidades.
-- `006_isolated-managed-database`: Provisión de bases de datos administradas (RDS, Azure PG Flexible, Cloud SQL) en capas de red aisladas.
-- `007_network-firewall-isolation`: Reforzamiento de aislamiento de red mediante reglas de firewall granulares.
-
-### 🎯 Componentes Principales
-
-#### Managed Database (HU-006)
-Automatización para bases de datos relacionales con aislamiento total, alta disponibilidad multi-zona y cifrado AES-256.
-
-#### Container Registry (HU-005)
-Gestión de imágenes de contenedores con políticas de inmutabilidad y escaneo de seguridad integrado.
-
-#### Secure Orchestrator
-Plano de cómputo para K8s con aislamiento multi-zona y gestión de identidades bajo el principio de mínimo privilegio.
-
-### Pruebas Unitarias
-
-El proyecto incluye una suite exhaustiva de pruebas que utiliza los mocks de Pulumi.
-
-Para ejecutar todas las pruebas:
-```bash
-$env:PYTHONPATH = "."
-pytest
-```
+- `006_isolated-managed-database`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
+- `007_network-firewall-isolation`: Implementación de firewalls perimetrales para el aislamiento de capas en Kubernetes.
+- `008-secure-identity-federation`: Implementación de federación de identidades nativa (Workload Identity / IRSA).
 
 ---
 
 ## 🇺🇸 Description (English)
 
-This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, and managed databases.
+This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, and identity federation.
 
 The project incorporates a rigorous **Spec-Driven Development** approach, managing the feature lifecycle from technical conceptualization to verified implementation.
 
@@ -85,14 +104,49 @@ The project incorporates a rigorous **Spec-Driven Development** approach, managi
 - **Factory Pattern**: Used in `infra/providers.py` to instantiate components based on the selected provider. Adheres to the Open/Closed Principle (OCP).
 - **ComponentResource**: Resources are grouped into logical Pulumi components for organization and dependency management.
 - **Typed Configuration**: `InfrastructureConfig` centralizes and validates input parameters.
-- **SOLID**: Designed for SRP, OCP, LSP, ISP, and DIP.
+- **SOLID**: Designed for SRP, OCP, LSP, ISP and DIP.
+
+### Visualización de Arquitectura / Architecture Visualization
+
+#### Estructura de Componentes (Factory Pattern) / Component Structure
+```mermaid
+classDiagram
+    class ProviderFactory {
+        <<interface>>
+        +create(name, opts)
+    }
+    class VpcComponent { <<abstract>> }
+    class LbComponent { <<abstract>> }
+    class OrchestratorComponent { <<abstract>> }
+    class DatabaseComponent { <<abstract>> }
+    class RegistryComponent { <<abstract>> }
+    class VpnComponent { <<abstract>> }
+    class BaseIdentityComponent { <<abstract>> }
+    
+    ProviderFactory <|-- VpcProviderFactory
+    ProviderFactory <|-- LbProviderFactory
+    ProviderFactory <|-- OrchestratorProviderFactory
+    ProviderFactory <|-- DatabaseProviderFactory
+    ProviderFactory <|-- RegistryProviderFactory
+    ProviderFactory <|-- VpnProviderFactory
+    ProviderFactory <|-- IdentityProviderFactory
+```
+
+#### Flujo de Federación de Identidad / Identity Federation Flow
+```mermaid
+flowchart TD
+    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
+    OIDC -->|Issue JWT| K8s
+    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
+    CloudIAM -->|Validate Token| CloudIAM
+    CloudIAM -->|Grant Temporary Credentials| K8s
+    CloudIAM -.->|Boundary Constraints| K8s
+```
 
 ### Project Structure
 
 ```text
 .
-├── .specify/               # Governance, templates, and workflow tracking
-├── dtls/                   # Design, Technical, and Logic specifications
 ├── infra/                  # Infrastructure components (Factory-based)
 │   ├── vpc/                # Agnostic network topologies (Tier-based)
 │   ├── lb/                 # External Load Balancers
@@ -100,8 +154,10 @@ The project incorporates a rigorous **Spec-Driven Development** approach, managi
 │   ├── db/                 # Managed Databases (RDS, Flexible Server, Cloud SQL)
 │   ├── registry/           # Secure Container Registries (ECR, ACR, Artifact Registry)
 │   ├── vpn/                # VPN connectivity
+│   ├── identity/           # Identity Federation (Workload Identity)
+│   ├── security/           # Security/Compliance components
 │   ├── config.py           # Typed configuration management
-│   └── providers.py        # Component Factories
+│   └── providers.py        # Component Factories (Factory Pattern)
 ├── specs/                  # Feature specifications (SDD artifacts)
 ├── tests/                  # Unit testing suite with Pulumi mocks
 ├── main.py                 # Pulumi entry point
@@ -115,24 +171,14 @@ Summary of the evolution and milestones implemented in each branch:
 - `main`: Core multi-cloud infrastructure base and reference architecture.
 - `create_constitution`: Project governance definition and engineering principles.
 - `install_spec_kit`: Integration of spec-driven development tools.
-- `002-agnostic-vpc-topology`: Three-tier agnostic network architecture (Public, Private, Isolated).
-- `003_agnostic_external-lb-security`: External load balancers with automated perimeter security policies.
-- `004-k8s-base-infra`: Multi-cloud Kubernetes control plane foundation.
-- `005-secure-multi-zone`: Automated multi-zone compute data plane with identity governance.
-- `006-secure-container-registry`: Container repositories with tag immutability and vulnerability scanning.
-- `006_isolated-managed-database`: Provisioning of managed databases (RDS, Azure PG Flexible, Cloud SQL) in isolated network layers.
-- `007_network-firewall-isolation`: Network isolation reinforcement via granular firewall rules.
-
-### 🎯 Key Components
-
-#### Managed Database
-Automation for relational databases with full isolation, multi-zone high availability, and AES-256 encryption.
-
-#### Container Registry
-Image management with immutability policies and integrated security scanning.
-
-#### Secure Orchestrator
-Kubernetes compute plane with multi-zone isolation and least-privilege identity governance.
+- `002-agnostic-vpc-topology`: Agnostic VPC topology implementation.
+- `003_agnostic_external-lb-security`: External load balancer implementation.
+- `004-k8s-base-infra`: Kubernetes base infrastructure.
+- `005-secure-multi-zone`: Secure multi-zone environment configuration.
+- `006-secure-container-registry`: Secure container registry implementation.
+- `006_isolated-managed-database`: Isolated managed database implementation.
+- `007_network-firewall-isolation`: Network firewall isolation implementation.
+- `008-secure-identity-federation`: Native identity federation implementation (Workload Identity / IRSA).
 
 ### Unit Testing
 
@@ -148,7 +194,5 @@ pytest
 
 ## 🚀 Cómo Extender / How to Extend
 
-Para añadir un nuevo proveedor o componente:
-1. Hereda de la clase base correspondiente en `infra/<componente>/base.py`.
-2. Implementa las interfaces específicas del proveedor.
-3. Registra la nueva implementación en la fábrica correspondiente en `infra/providers.py`.
+1.  **🇪🇸 ES**: Crea `infra/<componente>/<proveedor>_<tipo>.py` heredando de la clase base. Registra la nueva implementación en la fábrica correspondiente en `infra/providers.py`.
+2.  **🇺🇸 EN**: Create `infra/<componente>/<provider>_<type>.py` inheriting from the abstract base class. Register the new implementation in the corresponding factory in `infra/providers.py`.
