@@ -34,6 +34,24 @@ Este proyecto implementa una base de infraestructura para VPNs multi-cloud (AWS,
 └── requirements.txt        # Dependencias del proyecto
 ```
 
+### Ramas de Desarrollo (Branches)
+
+Resumen de la evolución y propósitos de las ramas del proyecto:
+
+- `main`: Infraestructura base multi-cloud.
+- `create_constitution`: Configuración inicial y normalización de archivos.
+- `install_spec_kit`: Integración de la metodología de desarrollo dirigida por especificaciones.
+- `002-agnostic-vpc-topology`: Implementación de topologías de VPC agnósticas.
+- `003_agnostic_external-lb-security`: Implementación de balanceadores de carga externos y políticas de seguridad.
+- `004-k8s-base-infra`: Infraestructura base para Kubernetes.
+- `005-secure-multi-zone`: Configuración de entornos multi-zona seguros.
+- `006-secure-container-registry`: Implementación de registro de contenedores seguro.
+
+### Gestión de Especificaciones y Gobernanza
+
+- **`dtls/`**: Contiene especificaciones técnicas, documentos de diseño y lógica de alto nivel.
+- **`specs/`**: Contiene la documentación específica de cada característica, incluyendo modelos de datos, planes de implementación, tareas, requisitos de seguridad y contratos.
+
 ### Pruebas Unitarias
 
 El proyecto incluye una suite de pruebas que utiliza los mocks de Pulumi, permitiendo validar la lógica de creación de recursos sin necesidad de credenciales reales de la nube.
@@ -95,6 +113,24 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 └── requirements.txt        # Project dependencies
 ```
 
+### Development Branches
+
+Summary of the evolution and purpose of project branches:
+
+- `main`: Core multi-cloud infrastructure base.
+- `create_constitution`: Initial configuration and file normalization.
+- `install_spec_kit`: Integration of spec-driven development methodology.
+- `002-agnostic-vpc-topology`: Implementation of agnostic VPC topologies.
+- `003_agnostic_external-lb-security`: Implementation of external load balancers and security policies.
+- `004-k8s-base-infra`: Kubernetes base infrastructure.
+- `005-secure-multi-zone`: Secure multi-zone environment configuration.
+- `006-secure-container-registry`: Implementation of secure container registry.
+
+### Specifications and Governance Management
+
+- **`dtls/`**: Contains technical specifications, design documents, and high-level logic documentation.
+- **`specs/`**: Contains specific feature-driven documentation, including data models, implementation plans, task breakdowns, security requirements, and architectural contracts.
+
 ### Unit Testing
 
 The project includes a testing suite that utilizes Pulumi mocks, allowing for validation of resource creation logic without requiring real cloud credentials.
@@ -105,108 +141,6 @@ To run the tests:
 # Set PYTHONPATH to include the root directory
 $env:PYTHONPATH = "."
 pytest
-```
-
-### 🎯 Orchestrator Component (HU-004: Secure Multi-Zone Automated Compute Data Plane)
-
-**Overview**: The orchestrator module provides factory-driven, multi-cloud infrastructure automation for Kubernetes compute data planes with built-in security, multi-zone isolation, and identity governance.
-
-#### Key Features
-
-- **Multi-Zone Private Network Isolation** (User Story 1)
-  - Automatically distributes compute infrastructure across multiple availability zones
-  - Ensures all compute nodes reside in private, non-routable subnets
-  - Prevents public internet access to compute nodes
-
-- **Automated Scaling Synchronization** (User Story 2)
-  - Preserves live node count during infrastructure updates
-  - Implements idempotent state management
-  - Prevents disruption to active workloads during deployments
-
-- **Perimeter Security Enforcement** (User Story 3)
-  - Blocks unauthorized remote access (SSH/RDP) from public internet
-  - Restricts egress traffic to authorized destinations only
-  - Supports DNS, database, and proxy endpoints
-  - Automatically configured security groups/firewall rules per provider
-
-- **Minimum Privilege Identity Governance** (User Story 4)
-  - Assigns least-privilege IAM roles/service accounts to compute hosts
-  - Enforces workload identity protection
-  - Prevents access to sensitive business data
-
-#### Usage Example
-
-```python
-from infra.orchestrator import OrchestratorProviderFactory
-
-# Instantiate orchestrator for target cloud provider
-orchestrator = OrchestratorProviderFactory.get_component("aws", "compute-plane")
-
-# Configure multi-zone isolation
-zones = ["us-east-1a", "us-east-1b"]
-subnets = ["subnet-11111", "subnet-22222"]
-orchestrator.allocate_multi_zone_subnets(zones, subnets)
-
-# Configure security
-orchestrator.configure_security()
-
-# Configure identity
-orchestrator.configure_identity()
-
-# Provision infrastructure
-orchestrator.provision()
-```
-
-#### Testing
-
-All orchestrator components include comprehensive mock-based unit tests:
-
-```bash
-# Run orchestrator tests only
-pytest tests/orchestrator/ -v
-
-# Run specific cloud provider tests
-pytest tests/orchestrator/test_aws_k8s.py -v
-pytest tests/orchestrator/test_azure_k8s.py -v
-pytest tests/orchestrator/test_gcp_k8s.py -v
-```
-
-### 🔒 Secure Container Registry (HU-006: Private & Immutable Registry)
-
-**Overview**: The registry module provides automated, multi-cloud infrastructure for provisioning private, secure, and immutable container image storage.
-
-#### Key Features
-
-- **Private & Secure Storage**: Rejects anonymous/public access.
-- **Structural Immutability**: Enforces tag immutability.
-- **Automated Scanning**: Triggers security vulnerability assessment upon upload.
-- **Least Privilege Access**: Identity-based access control for hosting/delivery roles.
-- **Lifecycle Management**: Automated data retention and cleanup based on parameterized thresholds.
-
-#### Usage Example
-
-```python
-from infra.providers import RegistryProviderFactory
-from infra.config import registry_config
-
-# Provision registry component
-registry = RegistryProviderFactory.create(
-    provider_name="aws",
-    name="prod-registry",
-    region="us-east-1"
-)
-
-# Properties are derived from registry_config
-print(f"Registry ID: {registry.registry_id}")
-```
-
-#### Testing
-
-All registry components include comprehensive mock-based unit tests:
-
-```bash
-# Run registry tests
-pytest tests/registry/ -v
 ```
 
 ---
