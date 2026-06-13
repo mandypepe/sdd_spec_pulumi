@@ -4,7 +4,7 @@
 
 ## 🇪🇸 Descripción (Español)
 
-Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores y bases de datos administradas.
+Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas y federación de identidades.
 
 El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especificaciones (Spec-Driven Development)**, gestionando el ciclo de vida de las características desde su conceptualización técnica hasta su implementación verificada.
 
@@ -14,6 +14,55 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 - **ComponentResource**: Todos los recursos se agrupan en componentes lógicos de Pulumi, facilitando la organización y el seguimiento de dependencias (Parent/Child).
 - **Configuración Tipada**: La clase `InfrastructureConfig` en `infra/config.py` centraliza y valida todos los parámetros de entrada.
 - **SOLID**: Diseñado para SRP, OCP, LSP, ISP y DIP.
+
+### Visualización de Arquitectura / Architecture Visualization
+
+#### Estructura de Componentes (Factory Pattern) / Component Structure
+```mermaid
+classDiagram
+    class InfrastructureConfig {
+        +String provider
+        +String region
+        +validate()
+    }
+    class ProviderFactory {
+        <<interface>>
+        +create(name, opts)
+    }
+    class CloudComponent {
+        <<abstract>>
+    }
+    InfrastructureConfig --> ProviderFactory : defines
+    ProviderFactory ..> CloudComponent : instantiates
+    CloudComponent <|-- AWSImplementation
+    CloudComponent <|-- AzureImplementation
+    CloudComponent <|-- GCPImplementation
+```
+
+#### Flujo de Federación de Identidad (Spec 009) / Identity Federation Flow
+```mermaid
+flowchart TD
+    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
+    OIDC -->|Issue JWT| K8s
+    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
+    CloudIAM -->|Validate Token| CloudIAM
+    CloudIAM -->|Grant Temporary Credentials| K8s
+    CloudIAM -.->|Boundary Constraints| K8s
+```
+
+#### Flujo de Aislamiento de Red (Spec 007) / Network Isolation Flow
+```mermaid
+flowchart TD
+    Internet((Internet)) -->|HTTPS| LB[Public Load Balancer]
+    subgraph Private_Compute [Private Compute Tier]
+        LB --> K8s[Kubernetes Cluster]
+        WI[Workload Identity] -.->|Token| K8s
+    end
+    subgraph Isolated_Data [Isolated Data Tier]
+        K8s --> DB[(Managed Database)]
+    end
+    DB --x|BLOCK| Internet
+```
 
 ### Estructura del Proyecto
 
@@ -28,6 +77,7 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 │   ├── db/                 # Bases de datos administradas (RDS, Flexible Server, Cloud SQL)
 │   ├── registry/           # Registros de contenedores seguros (ECR, ACR, Artifact Registry)
 │   ├── vpn/                # Conectividad VPN
+│   ├── identity/           # Federación de identidades (Workload Identity)
 │   ├── config.py           # Gestión de configuración tipada
 │   └── providers.py        # Fábricas de componentes
 ├── specs/                  # Especificaciones de características (SDD)
@@ -49,13 +99,14 @@ Resumen de la evolución y los hitos implementados en cada rama:
 - `005-secure-multi-zone`: Plano de datos de cómputo multi-zona automatizado con gobernanza de identidad.
 - `006-secure-container-registry`: Repositorios de contenedores con inmutabilidad de tags y escaneo de vulnerabilidades.
 - `006_isolated-managed-database`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
-- `007_network-firewall-isolation`: Implementación de firewalls perimetrales para el aislamiento de capas en Kubernetes, incluyendo whitelisting de dominios y políticas de retención de logs.
+- `007_network-firewall-isolation`: Implementación de firewalls perimetrales para el aislamiento de capas en Kubernetes.
+- `008-secure-identity-federation`: Implementación de federación de identidades nativa (Workload Identity / IRSA).
 
 ---
 
 ## 🇺🇸 Description (English)
 
-This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, and managed databases.
+This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, and identity federation.
 
 The project incorporates a rigorous **Spec-Driven Development** approach, managing the feature lifecycle from technical conceptualization to verified implementation.
 
@@ -64,7 +115,56 @@ The project incorporates a rigorous **Spec-Driven Development** approach, managi
 - **Factory Pattern**: Used in `infra/providers.py` to instantiate components based on the selected provider. Adheres to the Open/Closed Principle (OCP).
 - **ComponentResource**: Resources are grouped into logical Pulumi components for organization and dependency management.
 - **Typed Configuration**: `InfrastructureConfig` centralizes and validates input parameters.
-- **SOLID**: Designed for SRP, OCP, LSP, ISP, and DIP.
+- **SOLID**: Designed for SRP, OCP, LSP, ISP and DIP.
+
+### Visualización de Arquitectura / Architecture Visualization
+
+#### Estructura de Componentes (Factory Pattern) / Component Structure
+```mermaid
+classDiagram
+    class InfrastructureConfig {
+        +String provider
+        +String region
+        +validate()
+    }
+    class ProviderFactory {
+        <<interface>>
+        +create(name, opts)
+    }
+    class CloudComponent {
+        <<abstract>>
+    }
+    InfrastructureConfig --> ProviderFactory : defines
+    ProviderFactory ..> CloudComponent : instantiates
+    CloudComponent <|-- AWSImplementation
+    CloudComponent <|-- AzureImplementation
+    CloudComponent <|-- GCPImplementation
+```
+
+#### Flujo de Federación de Identidad (Spec 009) / Identity Federation Flow
+```mermaid
+flowchart TD
+    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
+    OIDC -->|Issue JWT| K8s
+    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
+    CloudIAM -->|Validate Token| CloudIAM
+    CloudIAM -->|Grant Temporary Credentials| K8s
+    CloudIAM -.->|Boundary Constraints| K8s
+```
+
+#### Flujo de Aislamiento de Red (Spec 007) / Network Isolation Flow
+```mermaid
+flowchart TD
+    Internet((Internet)) -->|HTTPS| LB[Public Load Balancer]
+    subgraph Private_Compute [Private Compute Tier]
+        LB --> K8s[Kubernetes Cluster]
+        WI[Workload Identity] -.->|Token| K8s
+    end
+    subgraph Isolated_Data [Isolated Data Tier]
+        K8s --> DB[(Managed Database)]
+    end
+    DB --x|BLOCK| Internet
+```
 
 ### Project Structure
 
@@ -79,6 +179,7 @@ The project incorporates a rigorous **Spec-Driven Development** approach, managi
 │   ├── db/                 # Managed Databases (RDS, Flexible Server, Cloud SQL)
 │   ├── registry/           # Secure Container Registries (ECR, ACR, Artifact Registry)
 │   ├── vpn/                # VPN connectivity
+│   ├── identity/           # Identity Federation (Workload Identity)
 │   ├── config.py           # Typed configuration management
 │   └── providers.py        # Component Factories
 ├── specs/                  # Feature specifications (SDD artifacts)
@@ -101,6 +202,7 @@ Summary of the evolution and milestones implemented in each branch:
 - `006-secure-container-registry`: Container repositories with tag immutability and vulnerability scanning.
 - `006_isolated-managed-database`: Managed multi-cloud database provisioning in isolated network layers with lifecycle protection.
 - `007_network-firewall-isolation`: Perimeter security firewall implementation for Kubernetes layer isolation, featuring domain whitelisting and log retention policies.
+- `008-secure-identity-federation`: Implementation of native identity federation (Workload Identity / IRSA).
 
 ### 🎯 Managed Database Component
 

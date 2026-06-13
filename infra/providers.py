@@ -29,6 +29,8 @@ from .db.aws_db import AwsDatabase
 from .db.azure_db import AzureDatabase
 from .db.gcp_db import GcpDatabase
 from .security.factory import SecurityProviderFactory
+from .identity.base import BaseIdentityComponent
+from .identity.factory import IdentityProviderFactory
 
 
 class SupportedProviders:
@@ -179,3 +181,20 @@ class DatabaseProviderFactory:
 
         db_class = cls._PROVIDERS[provider]
         return db_class(name=name, opts=opts)
+
+
+class IdentityProviderFactory:
+    """
+    🇪🇸 Factory para la creación de componentes de Identidad.
+    🇺🇸 Factory for Identity component creation.
+    """
+
+    @classmethod
+    def create(
+        cls,
+        provider_name: str,
+        name: str,
+        opts: Optional[pulumi.ResourceOptions] = None
+    ) -> BaseIdentityComponent:
+        # Utilizing the factory class imported from infra.identity.factory
+        return IdentityProviderFactory.create(provider_name, name, opts)
