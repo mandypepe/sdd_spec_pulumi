@@ -10,6 +10,7 @@ import pytest
 import pulumi
 import sys
 import os
+import asyncio
 
 # Asegurar que el directorio raíz está en el path para importar 'infra'
 # Ensure root directory is in path to import 'infra'
@@ -53,6 +54,13 @@ def pulumi_mocks():
     🇺🇸 Pytest fixture that configures Pulumi mocks before each test.
     Sets test execution context (project, stack, preview).
     """
+    # Usar el event loop actual si existe, de lo contrario crear uno
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    
     pulumi.runtime.set_mocks(
         MyMocks(),
         project="test-project",

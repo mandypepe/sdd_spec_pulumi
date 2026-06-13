@@ -10,7 +10,7 @@ import os
 from typing import Dict, Optional
 import pulumi
 
-from .constants import DEFAULT_TAGS, DEFAULT_VPN_NAME, DEFAULT_K8S_NODE_INSTANCE_TYPE, DEFAULT_K8S_MIN_NODES, DEFAULT_K8S_MAX_NODES, DEFAULT_SECURITY_LOG_RETENTION_DAYS
+from .constants import DEFAULT_TAGS, DEFAULT_VPN_NAME, DEFAULT_K8S_NODE_INSTANCE_TYPE, DEFAULT_K8S_MIN_NODES, DEFAULT_K8S_MAX_NODES, DEFAULT_SECURITY_LOG_RETENTION_DAYS, DEFAULT_DB_ENGINE, DEFAULT_DB_ENGINE_VERSION, DEFAULT_DB_INSTANCE_CLASS, DEFAULT_DB_STORAGE_GB, DEFAULT_DB_PORT
 
 
 class InfrastructureConfig:
@@ -275,9 +275,59 @@ class RegistryConfig:
         return self._cfg.get_int("registry:max_untagged_count") or 5
 
 
+class DatabaseConfig:
+    """
+    🇪🇸 Configuración para el componente de base de datos administrada.
+    🇺🇸 Configuration for managed database component.
+    """
+    def __init__(self, cfg: Optional[pulumi.Config] = None):
+        self._cfg = cfg or pulumi.Config()
+
+    @property
+    def engine(self) -> str:
+        """🇪🇸 Motor de base de datos / 🇺🇸 Database engine."""
+        return self._cfg.get("db:engine") or DEFAULT_DB_ENGINE
+
+    @property
+    def engine_version(self) -> str:
+        """🇪🇸 Versión del motor / 🇺🇸 Engine version."""
+        return self._cfg.get("db:engine_version") or DEFAULT_DB_ENGINE_VERSION
+
+    @property
+    def instance_class(self) -> str:
+        """🇪🇸 Clase de instancia / 🇺🇸 Instance class."""
+        return self._cfg.get("db:instance_class") or DEFAULT_DB_INSTANCE_CLASS
+
+    @property
+    def storage_gb(self) -> int:
+        """🇪🇸 Almacenamiento en GB / 🇺🇸 Storage in GB."""
+        return self._cfg.get_int("db:storage_gb") or DEFAULT_DB_STORAGE_GB
+
+    @property
+    def port(self) -> int:
+        """🇪🇸 Puerto del servicio / 🇺🇸 Service port."""
+        return self._cfg.get_int("db:port") or DEFAULT_DB_PORT
+
+    @property
+    def multi_az(self) -> bool:
+        """🇪🇸 Habilitar alta disponibilidad multi-zona / 🇺🇸 Enable multi-zone high availability."""
+        return self._cfg.get_bool("db:multi_az") or True
+
+    @property
+    def encryption_enabled(self) -> bool:
+        """🇪🇸 Habilitar cifrado en reposo (AES-256) / 🇺🇸 Enable encryption at rest (AES-256)."""
+        return self._cfg.get_bool("db:encryption_enabled") or True
+
+    @property
+    def deletion_protection_enabled(self) -> bool:
+        """🇪🇸 Habilitar protección contra eliminación / 🇺🇸 Enable deletion protection."""
+        return self._cfg.get_bool("db:deletion_protection_enabled") or True
+
+
 # Instancia única de configuración accesible globalmente (Singleton Pattern)
 # Single configuration instance accessible globally (Singleton Pattern)
 config = InfrastructureConfig()
 orchestrator_config = OrchestratorConfig()
 registry_config = RegistryConfig()
+database_config = DatabaseConfig()
 

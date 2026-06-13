@@ -24,6 +24,10 @@ from .registry.base import RegistryComponent
 from .registry.aws_registry import AwsRegistry
 from .registry.azure_registry import AzureRegistry
 from .registry.gcp_registry import GcpRegistry
+from .db.base import DatabaseComponent
+from .db.aws_db import AwsDatabase
+from .db.azure_db import AzureDatabase
+from .db.gcp_db import GcpDatabase
 
 
 class SupportedProviders:
@@ -143,3 +147,34 @@ class LbProviderFactory:
 
         lb_class = cls._PROVIDERS[provider]
         return lb_class(name=name, vpc_id=vpc_id, public_subnet_ids=public_subnet_ids, opts=opts)
+
+
+class DatabaseProviderFactory:
+    """
+    🇪🇸 Factory para la creación de componentes de Base de Datos.
+    🇺🇸 Factory for Database component creation.
+    """
+
+    _PROVIDERS: Dict[str, Type[DatabaseComponent]] = {
+        SupportedProviders.AWS: AwsDatabase,
+        SupportedProviders.AZURE: AzureDatabase,
+        SupportedProviders.GCP: GcpDatabase,
+    }
+
+    @classmethod
+    def create(
+        cls,
+        provider_name: str,
+        name: str,
+        opts: Optional[pulumi.ResourceOptions] = None
+    ) -> DatabaseComponent:
+        provider = (provider_name or "").lower()
+
+        if provider not in cls._PROVIDERS:
+            supported = ", ".join(cls._PROVIDERS.keys())
+            raise ValueError(
+                f"Unsupported provider: '{provider_name}'. Supported: {supported}"
+            )
+
+        db_class = cls._PROVIDERS[provider]
+        return db_class(name=name, opts=opts)

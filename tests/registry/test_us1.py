@@ -21,7 +21,7 @@ def test_azure_registry_provisioning():
     return registry.registry_id.apply(check_id)
 
 @pulumi.runtime.test
-def test_gcp_registry_provisioning():
+def test_gcp_registry_provisioning(pulumi_mocks):
     def check_id(args):
         assert args == "gcp-gar-id"
     
