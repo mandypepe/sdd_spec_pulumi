@@ -34,6 +34,19 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 └── requirements.txt        # Dependencias del proyecto
 ```
 
+### Ramas de Desarrollo (Branches)
+
+Resumen de la evolución y propósitos de las ramas del proyecto:
+
+- `main`: Infraestructura base multi-cloud.
+- `create_constitution`: Configuración inicial y normalización de archivos.
+- `install_spec_kit`: Integración de la metodología de desarrollo dirigida por especificaciones.
+- `002-agnostic-vpc-topology`: Implementación de topologías de VPC agnósticas.
+- `003_agnostic_external-lb-security`: Implementación de balanceadores de carga externos y políticas de seguridad.
+- `004-k8s-base-infra`: Infraestructura base para Kubernetes.
+- `005-secure-multi-zone`: Configuración de entornos multi-zona seguros.
+- `006-secure-container-registry`: Implementación de registro de contenedores seguro.
+
 ### Gestión de Especificaciones y Gobernanza
 
 - **`.specify/`**: Contiene la gobernanza del proyecto (`constitution.md`), plantillas y el seguimiento del progreso de las características (workflow de `spec-kit`).
@@ -83,6 +96,19 @@ The project incorporates a rigorous approach to **Spec-Driven Development**, man
 ├── main.py                 # Pulumi entry point
 └── requirements.txt        # Project dependencies
 ```
+
+### Development Branches
+
+Summary of the evolution and purpose of project branches:
+
+- `main`: Core multi-cloud infrastructure base.
+- `create_constitution`: Initial configuration and file normalization.
+- `install_spec_kit`: Integration of spec-driven development methodology.
+- `002-agnostic-vpc-topology`: Implementation of agnostic VPC topologies.
+- `003_agnostic_external-lb-security`: Implementation of external load balancers and security policies.
+- `004-k8s-base-infra`: Kubernetes base infrastructure.
+- `005-secure-multi-zone`: Secure multi-zone environment configuration.
+- `006-secure-container-registry`: Implementation of secure container registry.
 
 ### Specifications and Governance Management
 
