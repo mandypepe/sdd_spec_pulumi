@@ -48,7 +48,8 @@ Resumen de la evolución y los hitos implementados en cada rama:
 - `004-k8s-base-infra`: Fundamento del plano de control de Kubernetes multi-nube.
 - `005-secure-multi-zone`: Plano de datos de cómputo multi-zona automatizado con gobernanza de identidad.
 - `006-secure-container-registry`: Repositorios de contenedores con inmutabilidad de tags y escaneo de vulnerabilidades.
-- `007-branchname-feature-hu`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
+- `006_isolated-managed-database`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
+- `007_network-firewall-isolation`: Implementación de firewalls perimetrales para el aislamiento de capas en Kubernetes, incluyendo whitelisting de dominios y políticas de retención de logs.
 
 ---
 
@@ -98,7 +99,8 @@ Summary of the evolution and milestones implemented in each branch:
 - `004-k8s-base-infra`: Multi-cloud Kubernetes control plane foundation.
 - `005-secure-multi-zone`: Automated multi-zone compute data plane with identity governance.
 - `006-secure-container-registry`: Container repositories with tag immutability and vulnerability scanning.
-- `007-branchname-feature-hu`: Managed multi-cloud database provisioning in isolated network layers with lifecycle protection.
+- `006_isolated-managed-database`: Managed multi-cloud database provisioning in isolated network layers with lifecycle protection.
+- `007_network-firewall-isolation`: Perimeter security firewall implementation for Kubernetes layer isolation, featuring domain whitelisting and log retention policies.
 
 ### 🎯 Managed Database Component
 

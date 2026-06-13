@@ -28,6 +28,7 @@ from .db.base import DatabaseComponent
 from .db.aws_db import AwsDatabase
 from .db.azure_db import AzureDatabase
 from .db.gcp_db import GcpDatabase
+from .security.factory import SecurityProviderFactory
 
 
 class SupportedProviders:

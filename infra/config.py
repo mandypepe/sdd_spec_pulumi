@@ -324,10 +324,29 @@ class DatabaseConfig:
         return self._cfg.get_bool("db:deletion_protection_enabled") or True
 
 
+class SecurityConfig:
+    """
+    🇪🇸 Configuración para el componente de seguridad perimetral.
+    🇺🇸 Configuration for perimeter security component.
+    """
+    def __init__(self, cfg: Optional[pulumi.Config] = None):
+        self._cfg = cfg or pulumi.Config()
+
+    @property
+    def log_retention_days(self) -> int:
+        """🇪🇸 Días de retención de logs (365) / 🇺🇸 Log retention days (365)."""
+        return self._cfg.get_int("security:log_retention_days") or 365
+
+    @property
+    def fail_open_logging_enabled(self) -> bool:
+        """🇪🇸 Habilitar Fail-Open Logging / 🇺🇸 Enable Fail-Open Logging."""
+        return self._cfg.get_bool("security:fail_open_logging_enabled") or True
+
+
 # Instancia única de configuración accesible globalmente (Singleton Pattern)
 # Single configuration instance accessible globally (Singleton Pattern)
 config = InfrastructureConfig()
 orchestrator_config = OrchestratorConfig()
 registry_config = RegistryConfig()
 database_config = DatabaseConfig()
-
+security_config = SecurityConfig()
