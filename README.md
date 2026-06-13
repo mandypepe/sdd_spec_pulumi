@@ -48,7 +48,29 @@ Resumen de la evolución y los hitos implementados en cada rama:
 - `004-k8s-base-infra`: Fundamento del plano de control de Kubernetes multi-nube.
 - `005-secure-multi-zone`: Plano de datos de cómputo multi-zona automatizado con gobernanza de identidad.
 - `006-secure-container-registry`: Repositorios de contenedores con inmutabilidad de tags y escaneo de vulnerabilidades.
-- `007-branchname-feature-hu`: Provisión de bases de datos administradas en capas de red aisladas con protección de ciclo de vida.
+- `006_isolated-managed-database`: Provisión de bases de datos administradas (RDS, Azure PG Flexible, Cloud SQL) en capas de red aisladas.
+- `007_network-firewall-isolation`: Reforzamiento de aislamiento de red mediante reglas de firewall granulares.
+
+### 🎯 Componentes Principales
+
+#### Managed Database (HU-006)
+Automatización para bases de datos relacionales con aislamiento total, alta disponibilidad multi-zona y cifrado AES-256.
+
+#### Container Registry (HU-005)
+Gestión de imágenes de contenedores con políticas de inmutabilidad y escaneo de seguridad integrado.
+
+#### Secure Orchestrator
+Plano de cómputo para K8s con aislamiento multi-zona y gestión de identidades bajo el principio de mínimo privilegio.
+
+### Pruebas Unitarias
+
+El proyecto incluye una suite exhaustiva de pruebas que utiliza los mocks de Pulumi.
+
+Para ejecutar todas las pruebas:
+```bash
+$env:PYTHONPATH = "."
+pytest
+```
 
 ---
 
@@ -98,17 +120,19 @@ Summary of the evolution and milestones implemented in each branch:
 - `004-k8s-base-infra`: Multi-cloud Kubernetes control plane foundation.
 - `005-secure-multi-zone`: Automated multi-zone compute data plane with identity governance.
 - `006-secure-container-registry`: Container repositories with tag immutability and vulnerability scanning.
-- `007-branchname-feature-hu`: Managed multi-cloud database provisioning in isolated network layers with lifecycle protection.
+- `006_isolated-managed-database`: Provisioning of managed databases (RDS, Azure PG Flexible, Cloud SQL) in isolated network layers.
+- `007_network-firewall-isolation`: Network isolation reinforcement via granular firewall rules.
 
-### 🎯 Managed Database Component
+### 🎯 Key Components
 
-**Overview**: The database module provides factory-driven infrastructure automation for managed relational databases with built-in security, high availability, and lifecycle protection.
+#### Managed Database
+Automation for relational databases with full isolation, multi-zone high availability, and AES-256 encryption.
 
-#### Key Features
-- **Network Segregation**: Fully disconnected from public internet routes.
-- **High Availability**: Automatic multi-zone distribution and synchronous replication.
-- **Perimeter Security**: Restricted ingress only to authorized compute nodes.
-- **Data Protection**: AES-256 encryption at rest and immutable lifecycle protection.
+#### Container Registry
+Image management with immutability policies and integrated security scanning.
+
+#### Secure Orchestrator
+Kubernetes compute plane with multi-zone isolation and least-privilege identity governance.
 
 ### Unit Testing
 
