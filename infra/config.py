@@ -245,7 +245,39 @@ class OrchestratorConfig:
         return perms or ["eks:JoinCluster", "ecr:GetAuthorizationToken", "ecr:BatchGetImage"]
 
 
+class RegistryConfig:
+    """
+    🇪🇸 Configuración para el componente de registro.
+    🇺🇸 Configuration for registry component.
+    """
+    
+    def __init__(self, cfg: Optional[pulumi.Config] = None):
+        self._cfg = cfg or pulumi.Config()
+    
+    @property
+    def tag_immutability_enabled(self) -> bool:
+        """🇪🇸 Habilitar inmutabilidad de tags / 🇺🇸 Enable tag immutability."""
+        return self._cfg.get_bool("registry:tag_immutability_enabled") or True
+    
+    @property
+    def vulnerability_scanning_enabled(self) -> bool:
+        """🇪🇸 Habilitar escaneo de vulnerabilidades / 🇺🇸 Enable vulnerability scanning."""
+        return self._cfg.get_bool("registry:vulnerability_scanning_enabled") or True
+    
+    @property
+    def untagged_retention_days(self) -> int:
+        """🇪🇸 Retención de imágenes sin tag (días) / 🇺🇸 Untagged image retention (days)."""
+        return self._cfg.get_int("registry:untagged_retention_days") or 30
+
+    @property
+    def max_untagged_count(self) -> int:
+        """🇪🇸 Máximo de imágenes sin tag / 🇺🇸 Max untagged images."""
+        return self._cfg.get_int("registry:max_untagged_count") or 5
+
+
 # Instancia única de configuración accesible globalmente (Singleton Pattern)
 # Single configuration instance accessible globally (Singleton Pattern)
 config = InfrastructureConfig()
 orchestrator_config = OrchestratorConfig()
+registry_config = RegistryConfig()
+

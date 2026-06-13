@@ -67,7 +67,7 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 ```text
 .
 ├── infra/
-│   ├── vpn/                # Cloud-specific implementations
+│   ├── vpn/                # Cloud-specific VPN implementations
 │   │   ├── base.py         # Abstract interface
 │   │   ├── aws_vpn.py
 │   │   ├── azure_vpn.py
@@ -82,6 +82,11 @@ This project implements an infrastructure base for multi-cloud VPNs (AWS, Azure,
 │   │   ├── aws_k8s.py      # AWS Kubernetes orchestrator
 │   │   ├── azure_k8s.py    # Azure Kubernetes orchestrator
 │   │   └── gcp_k8s.py      # GCP Kubernetes orchestrator
+│   ├── registry/           # Multi-cloud Registry implementations
+│   │   ├── base.py         # Abstract registry interface
+│   │   ├── aws_registry.py
+│   │   ├── azure_registry.py
+│   │   └── gcp_registry.py
 │   ├── config.py           # Typed configuration management
 │   ├── constants.py        # Constant values and CIDRs
 │   └── providers.py        # Component Factory (Factory Pattern)
@@ -164,6 +169,44 @@ pytest tests/orchestrator/ -v
 pytest tests/orchestrator/test_aws_k8s.py -v
 pytest tests/orchestrator/test_azure_k8s.py -v
 pytest tests/orchestrator/test_gcp_k8s.py -v
+```
+
+### 🔒 Secure Container Registry (HU-006: Private & Immutable Registry)
+
+**Overview**: The registry module provides automated, multi-cloud infrastructure for provisioning private, secure, and immutable container image storage.
+
+#### Key Features
+
+- **Private & Secure Storage**: Rejects anonymous/public access.
+- **Structural Immutability**: Enforces tag immutability.
+- **Automated Scanning**: Triggers security vulnerability assessment upon upload.
+- **Least Privilege Access**: Identity-based access control for hosting/delivery roles.
+- **Lifecycle Management**: Automated data retention and cleanup based on parameterized thresholds.
+
+#### Usage Example
+
+```python
+from infra.providers import RegistryProviderFactory
+from infra.config import registry_config
+
+# Provision registry component
+registry = RegistryProviderFactory.create(
+    provider_name="aws",
+    name="prod-registry",
+    region="us-east-1"
+)
+
+# Properties are derived from registry_config
+print(f"Registry ID: {registry.registry_id}")
+```
+
+#### Testing
+
+All registry components include comprehensive mock-based unit tests:
+
+```bash
+# Run registry tests
+pytest tests/registry/ -v
 ```
 
 ---

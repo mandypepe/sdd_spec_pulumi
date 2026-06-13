@@ -1,8 +1,8 @@
 """
-🇪🇸 Factory para seleccionar el proveedor VPN (Factory Pattern & Open/Closed Principle).
+🇪🇸 Factory para seleccionar los proveedores de infraestructura (Factory Pattern & Open/Closed Principle).
 Permite extensión de proveedores sin modificar la lógica central.
 
-🇺🇸 Factory for selecting the VPN provider (Factory Pattern & Open/Closed Principle).
+🇺🇸 Factory for selecting infrastructure providers (Factory Pattern & Open/Closed Principle).
 Enables provider extension without modifying core logic.
 """
 
@@ -20,6 +20,10 @@ from .lb.base import LbComponent
 from .lb.aws_lb import AwsLb
 from .lb.azure_lb import AzureLb
 from .lb.gcp_lb import GcpLb
+from .registry.base import RegistryComponent
+from .registry.aws_registry import AwsRegistry
+from .registry.azure_registry import AzureRegistry
+from .registry.gcp_registry import GcpRegistry
 
 
 class SupportedProviders:
@@ -33,16 +37,35 @@ class SupportedProviders:
     GCP = "gcp"
 
 
-class VpnProviderFactory:
+class RegistryProviderFactory:
     """
-    🇪🇸 Factory para la creación de componentes VPN (Factory Pattern).
-    Mapea nombres de proveedor a implementaciones concretas.
-    
-    🇺🇸 Factory for VPN component creation (Factory Pattern).
-    Maps provider names to concrete implementations.
+    🇪🇸 Factory para la creación de componentes de Registro.
+    🇺🇸 Factory for Registry component creation.
     """
 
-    # Mapeo de proveedores a sus clases (Open/Closed Principle)
+    _PROVIDERS: Dict[str, Type[RegistryComponent]] = {
+        SupportedProviders.AWS: AwsRegistry,
+        SupportedProviders.AZURE: AzureRegistry,
+        SupportedProviders.GCP: GcpRegistry,
+    }
+
+    @classmethod
+    def create(cls, provider_name: str, name: str, region: str, opts: Optional[pulumi.ResourceOptions] = None) -> RegistryComponent:
+        provider = (provider_name or "").lower()
+        if provider not in cls._PROVIDERS:
+            supported = ", ".join(cls._PROVIDERS.keys())
+            raise ValueError(f"Unsupported provider: '{provider_name}'. Supported: {supported}")
+        
+        registry_class = cls._PROVIDERS[provider]
+        return registry_class(name=name, region=region, opts=opts)
+
+
+class VpnProviderFactory:
+    """
+    🇪🇸 Factory para la creación de componentes VPN.
+    🇺🇸 Factory for VPN component creation.
+    """
+
     _PROVIDERS: Dict[str, Type[VpnComponent]] = {
         SupportedProviders.AWS: AwsVpn,
         SupportedProviders.AZURE: AzureVpn,
@@ -51,22 +74,6 @@ class VpnProviderFactory:
 
     @classmethod
     def create(cls, provider_name: str, name: str, opts: Optional[pulumi.ResourceOptions] = None) -> VpnComponent:
-        """
-        🇪🇸 Crea una instancia de un componente VPN según el proveedor solicitado.
-        
-        🇺🇸 Creates a VPN component instance for the requested provider.
-        
-        Args:
-            provider_name: 🇪🇸 Nombre del proveedor ('aws', 'azure', 'gcp') / 🇺🇸 Provider name ('aws', 'azure', 'gcp')
-            name: 🇪🇸 Nombre base del recurso / 🇺🇸 Base resource name
-            opts: 🇪🇸 Opciones de Pulumi / 🇺🇸 Pulumi ResourceOptions
-            
-        Returns:
-            🇪🇸 Instancia del componente VPN / 🇺🇸 VPN component instance
-            
-        Raises:
-            ValueError: 🇪🇸 Si el proveedor no es soportado / 🇺🇸 If provider is unsupported
-        """
         provider = (provider_name or "").lower()
 
         if provider not in cls._PROVIDERS:
@@ -81,14 +88,10 @@ class VpnProviderFactory:
 
 class VpcProviderFactory:
     """
-    🇪🇸 Factory para la creación de componentes VPC (Factory Pattern).
-    Mapea nombres de proveedor a implementaciones concretas.
-    
-    🇺🇸 Factory for VPC component creation (Factory Pattern).
-    Maps provider names to concrete implementations.
+    🇪🇸 Factory para la creación de componentes VPC.
+    🇺🇸 Factory for VPC component creation.
     """
 
-    # Mapeo de proveedores a sus clases (Open/Closed Principle)
     _PROVIDERS = {
         SupportedProviders.AWS: AwsVpcComponent,
         SupportedProviders.AZURE: AzureVpcComponent,
@@ -97,22 +100,6 @@ class VpcProviderFactory:
 
     @classmethod
     def create(cls, provider_name: str, name: str, opts: Optional[pulumi.ResourceOptions] = None):
-        """
-        🇪🇸 Crea una instancia de un componente VPC según el proveedor solicitado.
-        
-        🇺🇸 Creates a VPC component instance for the requested provider.
-        
-        Args:
-            provider_name: 🇪🇸 Nombre del proveedor ('aws', 'azure', 'gcp') / 🇺🇸 Provider name ('aws', 'azure', 'gcp')
-            name: 🇪🇸 Nombre base del recurso / 🇺🇸 Base resource name
-            opts: 🇪🇸 Opciones de Pulumi / 🇺🇸 Pulumi ResourceOptions
-            
-        Returns:
-            🇪🇸 Instancia del componente VPC / 🇺🇸 VPC component instance
-            
-        Raises:
-            ValueError: 🇪🇸 Si el proveedor no es soportado / 🇺🇸 If provider is unsupported
-        """
         provider = (provider_name or "").lower()
 
         if provider not in cls._PROVIDERS:
@@ -127,14 +114,10 @@ class VpcProviderFactory:
 
 class LbProviderFactory:
     """
-    🇪🇸 Factory para la creación de componentes de Load Balancer (Factory Pattern).
-    Mapea nombres de proveedor a implementaciones concretas.
-    
-    🇺🇸 Factory for Load Balancer component creation (Factory Pattern).
-    Maps provider names to concrete implementations.
+    🇪🇸 Factory para la creación de componentes de Load Balancer.
+    🇺🇸 Factory for Load Balancer component creation.
     """
 
-    # Mapeo de proveedores a sus clases (Open/Closed Principle)
     _PROVIDERS = {
         SupportedProviders.AWS: AwsLb,
         SupportedProviders.AZURE: AzureLb,
@@ -150,11 +133,6 @@ class LbProviderFactory:
         public_subnet_ids: pulumi.Input[list[str]],
         opts: Optional[pulumi.ResourceOptions] = None
     ) -> LbComponent:
-        """
-        🇪🇸 Crea una instancia de un componente de Load Balancer según el proveedor solicitado.
-        
-        🇺🇸 Creates a Load Balancer component instance for the requested provider.
-        """
         provider = (provider_name or "").lower()
 
         if provider not in cls._PROVIDERS:
@@ -165,4 +143,3 @@ class LbProviderFactory:
 
         lb_class = cls._PROVIDERS[provider]
         return lb_class(name=name, vpc_id=vpc_id, public_subnet_ids=public_subnet_ids, opts=opts)
-
