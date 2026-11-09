@@ -245,3 +245,4 @@ __pycache__/
 *.log
 .DS_Store
 .gemini
+.coda
