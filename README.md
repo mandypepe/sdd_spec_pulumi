@@ -22,29 +22,15 @@ El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especific
 classDiagram
     class ProviderFactory {
         <<interface>>
-        +create(name, opts)
+        +create(name, opts) ComponentResource
     }
-    class VpcComponent {
-        <<abstract>>
-    }
-    class LbComponent {
-        <<abstract>>
-    }
-    class OrchestratorComponent {
-        <<abstract>>
-    }
-    class DatabaseComponent {
-        <<abstract>>
-    }
-    class RegistryComponent {
-        <<abstract>>
-    }
-    class VpnComponent {
-        <<abstract>>
-    }
-    class BaseIdentityComponent {
-        <<abstract>>
-    }
+    class VpcComponent
+    class LbComponent
+    class OrchestratorComponent
+    class DatabaseComponent
+    class RegistryComponent
+    class VpnComponent
+    class BaseIdentityComponent
 
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
@@ -124,29 +110,15 @@ The project incorporates a rigorous **Spec-Driven Development** approach, managi
 classDiagram
     class ProviderFactory {
         <<interface>>
-        +create(name, opts)
+        +create(name, opts) ComponentResource
     }
-    class VpcComponent {
-        <<abstract>>
-    }
-    class LbComponent {
-        <<abstract>>
-    }
-    class OrchestratorComponent {
-        <<abstract>>
-    }
-    class DatabaseComponent {
-        <<abstract>>
-    }
-    class RegistryComponent {
-        <<abstract>>
-    }
-    class VpnComponent {
-        <<abstract>>
-    }
-    class BaseIdentityComponent {
-        <<abstract>>
-    }
+    class VpcComponent
+    class LbComponent
+    class OrchestratorComponent
+    class DatabaseComponent
+    class RegistryComponent
+    class VpnComponent
+    class BaseIdentityComponent
 
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
