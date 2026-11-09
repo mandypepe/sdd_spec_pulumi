@@ -24,15 +24,31 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class IdentityComponent { <<abstract>> }
-    class SecurityComponent { <<abstract>> }
-    
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class IdentityComponent {
+        <<abstract>>
+    }
+    class SecurityComponent {
+        <<abstract>>
+    }
+
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
     ProviderFactory <|-- OrchestratorProviderFactory
@@ -46,10 +62,10 @@ classDiagram
 #### Flujo de Desarrollo Dirigido por Especificaciones (Spec-Driven Flow)
 ```mermaid
 flowchart LR
-    A[Idea/Requirement] --> B[Spec]
-    B --> C[Plan]
-    C --> D[Implement]
-    D --> E[Validate]
+    A["Idea/Requirement"] --> B["Spec"]
+    B --> C["Plan"]
+    C --> D["Implement"]
+    D --> E["Validate"]
     E --> B
 ```
 
@@ -57,17 +73,17 @@ flowchart LR
 
 ```text
 .
-├── infra/                  # Componentes de infraestructura
+├── infra/                  # Componentes de infraestructura (Factory-based)
 │   ├── db/                 # Bases de datos administradas
 │   ├── identity/           # Federación de identidades
-│   ├── lb/                 # Balanceadores de carga
+│   ├── lb/                 # Balanceadores de carga externos
 │   ├── orchestrator/       # Orquestación de computo (K8s)
 │   ├── registry/           # Registros de contenedores seguros
 │   ├── security/           # Componentes de seguridad/cumplimiento
 │   ├── vpc/                # Topologías de red
 │   ├── vpn/                # Conectividad VPN
 │   ├── config.py           # Gestión de configuración tipada
-│   └── providers.py        # Fábricas de componentes
+│   └── providers.py        # Fábricas de componentes (Factory Pattern)
 ├── specs/                  # Especificaciones (SDD)
 ├── tests/                  # Suite de pruebas unitarias
 └── main.py                 # Punto de entrada de Pulumi
@@ -75,7 +91,7 @@ flowchart LR
 
 ### Ramas de Desarrollo (Branches)
 
-Resumen de los hitos implementados en cada rama:
+Resumen de la evolución y los hitos implementados en cada rama:
 
 - `main`: Infraestructura base multi-cloud.
 - `create_constitution`: Configuración inicial y normalización.
@@ -86,14 +102,14 @@ Resumen de los hitos implementados en cada rama:
 - `005-secure-multi-zone`: Entornos multi-zona seguros.
 - `006-secure-container-registry`: Registro de contenedores seguro.
 - `006_isolated-managed-database`: Bases de datos aisladas.
-- `007_network-firewall-isolation`: Aislamiento de red mediante firewalls.
+- `007_network-firewall-isolation`: Aislamiento mediante firewalls.
 - `008-secure-identity-federation`: Federación de identidades nativa.
 
 ---
 
 ## 🇺🇸 Description (English)
 
-This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, and identity federation.
+This project implements a multi-cloud infrastructure base (AWS, Azure, GCP) using Pulumi, following software engineering best practices. The goal is to provide a "gold standard" for Infrastructure as Code (IaC), being modular, testable, and easy to extend for network topologies, load balancers, Kubernetes orchestration, container registries, managed databases, security, and identity federation.
 
 The project incorporates a rigorous approach to **Spec-Driven Development**, managing the feature lifecycle from technical conceptualization to implementation.
 
@@ -113,15 +129,31 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class IdentityComponent { <<abstract>> }
-    class SecurityComponent { <<abstract>> }
-    
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class IdentityComponent {
+        <<abstract>>
+    }
+    class SecurityComponent {
+        <<abstract>>
+    }
+
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
     ProviderFactory <|-- OrchestratorProviderFactory
@@ -135,10 +167,10 @@ classDiagram
 #### Flujo de Desarrollo Dirigido por Especificaciones (Spec-Driven Flow)
 ```mermaid
 flowchart LR
-    A[Idea/Requirement] --> B[Spec]
-    B --> C[Plan]
-    C --> D[Implement]
-    D --> E[Validate]
+    A["Idea/Requirement"] --> B["Spec"]
+    B --> C["Plan"]
+    C --> D["Implement"]
+    D --> E["Validate"]
     E --> B
 ```
 
@@ -146,7 +178,7 @@ flowchart LR
 
 ```text
 .
-├── infra/                  # Infrastructure components
+├── infra/                  # Infrastructure components (Factory-based)
 │   ├── db/                 # Managed Databases
 │   ├── identity/           # Identity Federation
 │   ├── lb/                 # Load Balancer implementations
@@ -156,7 +188,7 @@ flowchart LR
 │   ├── vpc/                # Virtual Private Cloud topologies
 │   ├── vpn/                # VPN connectivity
 │   ├── config.py           # Typed configuration management
-│   └── providers.py        # Component Factories
+│   └── providers.py        # Component Factories (Factory Pattern)
 ├── specs/                  # Specification-driven development artifacts
 ├── tests/                  # Unit testing suite with mocks
 └── main.py                 # Pulumi entry point
@@ -169,11 +201,11 @@ Summary of the evolution and milestones implemented in each branch:
 - `main`: Core multi-cloud infrastructure base.
 - `create_constitution`: Initial configuration and file normalization.
 - `install_spec_kit`: Integration of spec-driven development methodology.
-- `002-agnostic-vpc-topology`: Implementation of agnostic VPC topologies.
-- `003_agnostic_external-lb-security`: Implementation of external load balancers and security policies.
+- `002-agnostic-vpc-topology`: Agnostic VPC topology implementation.
+- `003_agnostic_external-lb-security`: External load balancer implementation.
 - `004-k8s-base-infra`: Kubernetes base infrastructure.
 - `005-secure-multi-zone`: Secure multi-zone environment configuration.
-- `006-secure-container-registry`: Implementation of secure container registry.
+- `006-secure-container-registry`: Secure container registry implementation.
 - `006_isolated-managed-database`: Isolated managed database implementation.
 - `007_network-firewall-isolation`: Network firewall isolation implementation.
 - `008-secure-identity-federation`: Native identity federation implementation.
@@ -187,3 +219,10 @@ To run all tests:
 $env:PYTHONPATH = "."
 pytest
 ```
+
+---
+
+## 🚀 Cómo Extender / How to Extend
+
+1.  **🇪🇸 ES**: Crea `infra/<componente>/<proveedor>_<tipo>.py` heredando de la clase base. Registra la nueva implementación en la fábrica correspondiente en `infra/providers.py`.
+2.  **🇺🇸 EN**: Create `infra/<componente>/<provider>_<type>.py` inheriting from the abstract base class. Register the new implementation in the corresponding factory in `infra/providers.py`.
