@@ -24,14 +24,30 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class IdentityComponent { <<abstract>> }
-    class SecurityComponent { <<abstract>> }
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class IdentityComponent {
+        <<abstract>>
+    }
+    class SecurityComponent {
+        <<abstract>>
+    }
 
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
@@ -46,10 +62,10 @@ classDiagram
 #### Flujo de Desarrollo Dirigido por Especificaciones (Spec-Driven Flow)
 ```mermaid
 flowchart LR
-    A[Idea/Requirement] --> B[Spec]
-    B --> C[Plan]
-    C --> D[Implement]
-    D --> E[Validate]
+    A["Idea/Requirement"] --> B["Spec"]
+    B --> C["Plan"]
+    C --> D["Implement"]
+    D --> E["Validate"]
     E --> B
 ```
 
@@ -113,14 +129,30 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class IdentityComponent { <<abstract>> }
-    class SecurityComponent { <<abstract>> }
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class IdentityComponent {
+        <<abstract>>
+    }
+    class SecurityComponent {
+        <<abstract>>
+    }
 
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
@@ -135,10 +167,10 @@ classDiagram
 #### Flujo de Desarrollo Dirigido por Especificaciones (Spec-Driven Flow)
 ```mermaid
 flowchart LR
-    A[Idea/Requirement] --> B[Spec]
-    B --> C[Plan]
-    C --> D[Implement]
-    D --> E[Validate]
+    A["Idea/Requirement"] --> B["Spec"]
+    B --> C["Plan"]
+    C --> D["Implement"]
+    D --> E["Validate"]
     E --> B
 ```
 

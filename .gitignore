@@ -235,3 +235,4 @@ build/
 # Logs
 *.log
 
+.coda
