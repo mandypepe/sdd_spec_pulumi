@@ -4,7 +4,7 @@
 
 ## 🇪🇸 Descripción (Español)
 
-Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de VPC, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas y federación de identidades.
+Este proyecto implementa una base de infraestructura multi-cloud (AWS, Azure, GCP) utilizando Pulumi y siguiendo las mejores prácticas de ingeniería de software. El objetivo es proporcionar un estándar de oro para la infraestructura como código (IaC), siendo modular, testeable y fácil de extender para topologías de red, balanceadores de carga, orquestación de Kubernetes, registros de contenedores, bases de datos administradas, seguridad y federación de identidades.
 
 El proyecto incorpora un enfoque riguroso de **desarrollo dirigido por especificaciones (Spec-Driven Development)**, gestionando el ciclo de vida de las características desde su conceptualización técnica hasta su implementación.
 
@@ -24,14 +24,31 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class BaseIdentityComponent { <<abstract>> }
-    
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class IdentityComponent {
+        <<abstract>>
+    }
+    class SecurityComponent {
+        <<abstract>>
+    }
+
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
     ProviderFactory <|-- OrchestratorProviderFactory
@@ -44,11 +61,11 @@ classDiagram
 #### Flujo de Federación de Identidad / Identity Federation Flow
 ```mermaid
 flowchart TD
-    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
-    OIDC -->|Issue JWT| K8s
-    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
-    CloudIAM -->|Validate Token| CloudIAM
-    CloudIAM -->|Grant Temporary Credentials| K8s
+    K8s["K8s Workload"] -->|"Request Token"| OIDC["OIDC Issuer"]
+    OIDC -->|"Issue JWT"| K8s
+    K8s -->|"Present JWT"| CloudIAM["Cloud IAM Provider"]
+    CloudIAM -->|"Validate Token"| Validate["Token Validation"]
+    Validate -->|"Grant Temporary Credentials"| K8s
 ```
 
 ### Estructura del Proyecto
@@ -111,14 +128,28 @@ classDiagram
         <<interface>>
         +create(name, opts)
     }
-    class VpcComponent { <<abstract>> }
-    class LbComponent { <<abstract>> }
-    class OrchestratorComponent { <<abstract>> }
-    class DatabaseComponent { <<abstract>> }
-    class RegistryComponent { <<abstract>> }
-    class VpnComponent { <<abstract>> }
-    class BaseIdentityComponent { <<abstract>> }
-    
+    class VpcComponent {
+        <<abstract>>
+    }
+    class LbComponent {
+        <<abstract>>
+    }
+    class OrchestratorComponent {
+        <<abstract>>
+    }
+    class DatabaseComponent {
+        <<abstract>>
+    }
+    class RegistryComponent {
+        <<abstract>>
+    }
+    class VpnComponent {
+        <<abstract>>
+    }
+    class BaseIdentityComponent {
+        <<abstract>>
+    }
+
     ProviderFactory <|-- VpcProviderFactory
     ProviderFactory <|-- LbProviderFactory
     ProviderFactory <|-- OrchestratorProviderFactory
@@ -131,11 +162,11 @@ classDiagram
 #### Flujo de Federación de Identidad / Identity Federation Flow
 ```mermaid
 flowchart TD
-    K8s[K8s Workload] -->|Request Token| OIDC[OIDC Issuer]
-    OIDC -->|Issue JWT| K8s
-    K8s -->|Present JWT| CloudIAM[Cloud IAM Provider]
-    CloudIAM -->|Validate Token| CloudIAM
-    CloudIAM -->|Grant Temporary Credentials| K8s
+    K8s["K8s Workload"] -->|"Request Token"| OIDC["OIDC Issuer"]
+    OIDC -->|"Issue JWT"| K8s
+    K8s -->|"Present JWT"| CloudIAM["Cloud IAM Provider"]
+    CloudIAM -->|"Validate Token"| Validate["Token Validation"]
+    Validate -->|"Grant Temporary Credentials"| K8s
 ```
 
 ### Project Structure
